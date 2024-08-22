@@ -6,8 +6,8 @@ But the Russian part is easy to replace with any other language.
 
 The idea of ​​the project arose due to
 constant problems - 
-with paid programs, an incredible amount of advertising, time limitations, learning the wrong thing 
-- that arise in those who are learning a foreign language for the first time.
+with paid programs, an incredible amount of advertising, time limitations, learning the wrong thing -
+that arise in those who are learning a foreign language for the first time.
 
 The concept of the program is minimalism.
 
@@ -23,8 +23,8 @@ The author does NOT welcome commercial use.
 
 Идея проекта возникла из за 
 постоянных проблем - 
-с платными программами, невероятным количеством рекламы, ограничением времени, изучением не того что нужно 
-- возникающими у тех кто впервые учит иностранный язык.
+с платными программами, невероятным количеством рекламы, ограничением времени, изучением не того что нужно -
+возникающими у тех кто впервые учит иностранный язык.
 
 Концепция программы - минимализм.
 
