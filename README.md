@@ -11,7 +11,7 @@ that arise in those who are learning a foreign language for the first time.
 
 The concept of the program is minimalism.
 
-The program is free
+The program is free.
 The author does NOT welcome commercial use.
 
 * * *
@@ -28,7 +28,7 @@ The author does NOT welcome commercial use.
 
 Концепция программы - минимализм.
 
-Программа бесплатна
+Программа бесплатна.
 Использование в коммерческих целях - автор НЕ приветсвует. 
 
 * * *
