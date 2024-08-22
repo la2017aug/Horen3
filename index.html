@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<!-- 
+MIT License
+Copyright (c) 2024  Oleksandr Lavrynenko  la2017aug@gmail.com
+Permission is granted to use, copy, modify, and distribute this software under the MIT License.
+See the LICENSE file for full terms.
+-->
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dict7.2024-0713_0812</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Установите минимальную высоту равной высоте окна */
+        }
+
+        .tree {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .node {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-button {
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: #FFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .top-list {
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: #FFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .top-zero {
+            padding: 5px 10px;
+            background-color: lightblue;
+            color: #FEF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .top-question {
+            padding: 5px 10px;
+            background-color: #FFA500;
+            color: #FEF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .sub-list {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: #FEF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .sub-text {
+            padding: 5px 10px;
+            background-color: #006400;
+            color: #FEF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .sub-test {
+            padding: 5px 10px;
+            background-color: #DC143C;
+            color: #FEF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .sub-picture {
+            padding: 5px 10px;
+            background-color: #FFD700;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .sub-node {
+            display: none;
+            flex-direction: column;
+            margin-left: 30px;
+        }
+
+        .sub-node.show {
+            display: flex;
+        }
+
+        .main-content {
+            flex: 1; /* Занимает все доступное пространство между шапкой и футером */
+            padding: 20px;
+            overflow: auto; /* Позволяет содержимому прокручиваться */
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            /* padding: 0px 0; Уменьшенные внутренние отступы */
+            text-align: center;
+            font-size: 0.7em; /* Уменьшенный размер шрифта */
+        }
+
+        footer a {
+            color: #ddd; /* Цвет для обычных ссылок */
+            text-decoration: none; /* Убирает подчеркивание */
+        }
+
+        footer a:visited {
+            color: #b3b3b3; /* Светлый цвет для посещенных ссылок */
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="tree"></div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Oleksandr Lavrynenko. This project is licensed under the <a href="./LICENSE.md">MIT License</a>.</p>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tree = document.querySelector('.tree');
+
+            tree.addEventListener('click', function(event) {
+                const target = event.target;
+                
+                if (target.classList.contains('toggle-button')) {
+                    const node = target.closest('.node');
+                    const subNode = node.nextElementSibling;
+
+                    if (subNode && subNode.classList.contains('sub-node')) {
+                        if (target.textContent === '+') {
+                            target.textContent = '-';
+                            subNode.classList.add('show');
+                        } else {
+                            target.textContent = '+';
+                            subNode.classList.remove('show');
+                        }
+
+                        let sibling = node.nextElementSibling;
+                        while (sibling && !sibling.classList.contains('node')) {
+                            sibling.style.display = target.textContent === '-' ? 'flex' : 'none';
+                            sibling = sibling.nextElementSibling;
+                        }
+                    }
+                }
+
+                if (target.classList.contains('top-list') || target.classList.contains('sub-list')) {
+                    var number = target.getAttribute('data-number');
+                    if (number) {
+                        //window.location.href = 'list.html?number=' + number; // переход
+                        window.open('list.html?number=' + number, '_blank'); // в новой вкладке
+                    }
+                }
+
+                if (target.classList.contains('top-question')) {
+                    var number = target.getAttribute('data-number');
+                    if (number) {
+                        window.open('question.html?number=' + number, '_blank');
+                    } else {
+                        window.open('question.html', '_blank');
+                    }
+                }
+
+                if (target.classList.contains('sub-text')) {
+                    var number = target.getAttribute('data-number');
+                    if (number) {
+                        window.open('text.html?number=' + number, '_blank');
+                    }
+                }
+
+                if (target.classList.contains('sub-test')) {
+                    var number = target.getAttribute('data-number');
+                    if (number) {
+                        window.open('test.html?number=' + number, '_blank');
+                    }
+                }
+
+                if (target.classList.contains('sub-picture')) {
+                    var number = target.getAttribute('data-number');
+                    if (number) {
+                        window.open('picture.html?number=' + number, '_blank');
+                    }
+                }
+
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<!-- 
+MIT License
+Copyright (c) 2024  Oleksandr Lavrynenko  la2017aug@gmail.com
+Permission is granted to use, copy, modify, and distribute this software under the MIT License.
+See the LICENSE file for full terms.
+-->
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Высота тела страницы на весь экран */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 99%;
+            margin: 5px auto; /* Уменьшенные отступы сверху и снизу */
+            flex: 1; /* Занимает оставшееся пространство между шапкой и нижним краем страницы */
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 20px; /* Увеличенный отступ снизу */
+        }
+
+        .text-container {
+            margin: 5px 0; /* Уменьшенный отступ сверху и снизу */
+            font-size: 12px; /* Размер шрифта уменьшен */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            height: 100px; /* Уменьшенная высота текстового контейнера */
+            overflow-y: auto;
+            white-space: pre-wrap; /* Сохраняем пробелы и переносы строк */
+            font-family: 'Courier New', Courier, monospace; /* Моноширинный шрифт */
+            line-height: 1.5; /* Увеличенный межстрочный интервал */
+            color: #000000; /* Более яркий цвет текста */
+            text-align: left; /* Текст начинался от левого края */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between; /* Выровняли элементы шапки по сторонам */
+            align-items: center;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .back-button, .reset-button {
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            text-align: center;
+            margin-left: 2px; /* Расстояние между кнопками */
+        }
+
+        .back-button:hover, .reset-button:hover {
+            background-color: #218838;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Привязка кнопок к левой стороне */
+            margin-top: 10px;
+        }
+
+        .button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            text-align: left; /* Текст кнопки будет выровнен по левому краю */
+            margin: 5px 0; /* Отступы между кнопками */
+            width: 100%; /* Кнопки вопросов занимают всю ширину контейнера */
+            max-width: fit-content; /* Кнопки соответствуют размеру текста */
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .button-2 {
+            cursor: pointer;
+            background-color: #28a745; /* Цвет кнопки ответа */
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            text-align: left; /* Текст кнопки будет выровнен по левому краю */
+            margin: 5px 0 5px 20px; /* Отступы между кнопками и сдвиг вправо на 20px */
+            max-width: fit-content; /* Кнопка соответствует размеру текста */
+            display: block; /* Кнопки располагаются вертикально */
+            white-space: nowrap; /* Запретить перенос текста */
+        }
+
+        .button-2:hover {
+            background-color: #218838;
+        }
+    </style>
+    <script src="common.js"></script>
+</head>
+<body>
+    <audio id="background-audio"></audio>
+    <div class="header">
+        <!-- Antworten zurücksetzen -->
+        <button class="reset-button" onclick="resetAnswers()">Reset answers</button>
+        <button class="back-button" onclick="window.close()">&lt;</button>
+    </div>
+    <div class="container">
+        <div class="text-container" id="text-display">
+            <!-- Здесь будет отображаться описание задания -->
+        </div>
+        <div class="button-container" id="button-container">
+            <!-- Здесь будут динамически добавляться кнопки вопросов и ответов -->
+        </div>
+    </div>
+
+    <script>
+        // Вызываем функцию при загрузке страницы
+        //window.onload = function() {
+        //    refreshPageOnce();
+        //};
+
+        // Функция для получения параметров из query string
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+        
+        // Очистка старых данных в контейнере
+        function clearContainer() {
+            var container = document.getElementById('button-container');
+            container.innerHTML = '';
+        }
+
+        function playAudio(text) {
+            var audio = document.getElementById('background-audio');
+            var fileName = 'test/' + cleanseFileName(text);
+            //alert(fileName);
+            audio.src = fileName + '.mp3';
+            audio.play().catch(function(error) {
+                console.log('playAudio error: ', error);
+            });
+        }
+
+        // Загрузка данных при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            var fileName = getParameterByName('number'); // Получаем имя файла из query string параметра 'number'
+            if (!fileName) {
+                console.error('Не удалось получить имя файла из query string');
+                return;
+            }
+
+            // Формируем путь к файлу данных
+            var dataFile = 'test/' + fileName + '.js';
+            clearContainer(); // Очищаем старые данные
+            var scriptElement = document.createElement('script');
+            scriptElement.src = dataFile;
+
+            scriptElement.onload = function() {
+                console.log('Файл данных загружен успешно: ' + dataFile);
+                processData(data); // Обрабатываем данные после загрузки
+            };
+            scriptElement.onerror = function() {
+                console.error('Ошибка загрузки файла данных: ' + dataFile);
+            };
+            
+            document.head.appendChild(scriptElement); // Добавляем скрипт на страницу
+        });
+
+        // Функция для изменения текста кнопки и воспроизведения звука
+        function changeTextAndPlay(button, text) {
+            button.textContent = text; // Установка нового текста на кнопке
+            playAudio(text); // Воспроизведение звука по тексту кнопки
+        }
+
+        // Функция для сброса ответов в первоначальное состояние
+        function resetAnswers() {
+            var answerButtons = document.querySelectorAll('.button-2');
+
+            answerButtons.forEach(function(button) {
+                button.textContent = ''; // Очистка текста кнопки
+            });
+        }
+
+        // Обработка данных и создание кнопок вопросов и ответов
+        function processData(data) {
+            var textDisplay = document.getElementById('text-display');
+            var buttonContainer = document.getElementById('button-container');
+
+            // Загружаем содержимое текстового контейнера
+            textDisplay.textContent = data.taskDescription.trim();
+
+            // Формируем кнопки вопросов
+            var questionsArray = data.questions.trim().split('\n');
+            questionsArray.forEach(function(questionText, index) {
+                var questionButton = document.createElement('button');
+                questionButton.className = 'button';
+                questionButton.textContent = questionText.trim();
+                questionButton.onclick = function() { playAudio(data.audioFiles.trim().split('\n')[index].trim()); };
+                buttonContainer.appendChild(questionButton);
+
+                // Формируем кнопки ответов для каждого вопроса
+                var answersArray = data.answers[index].trim().split('\n');
+                var answerContainer = document.createElement('div');
+                buttonContainer.appendChild(answerContainer);
+                answersArray.forEach(function(answerText) {
+                    var answerButton = document.createElement('button');
+                    answerButton.className = 'button button-2';
+                    //answerButton.textContent = answerText.trim();
+                    answerButton.onclick = function() { changeTextAndPlay(this, answerText.trim()); };
+                    answerContainer.appendChild(answerButton);
+                });
+            });
+        }
+    </script>
+</body>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<!-- 
+MIT License
+Copyright (c) 2024 Oleksandr Lavrynenko
+Permission is granted to use, copy, modify, and distribute this software under the MIT License.
+See the LICENSE file for full terms.
+-->
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question.20240805</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            align-items: center;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        header button {
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        header button:hover {
+            background-color: #218838;
+        }
+
+        /* Новый стиль для раскрывающегося списка */
+        .dropdown {
+            margin-left: 5px;
+            width: 150px; /* Фиксированная ширина */
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .container {
+            margin: 5px 10px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            /* background-color: #e6e6e6; */
+            justify-content: flex-start; /* к медиа-запросу */
+        }
+
+        #waitContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* background-color: blue; */
+        }
+
+        #questionContainer, #listContainer {
+            display: none; /* Скрыть элементы по умолчанию */
+        }
+
+        .button {
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            text-align: left;
+            border: none;
+            margin: 15px 0;
+            width: 100%;
+            max-width: fit-content;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        #stepButton, #back-button {
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            text-align: center;
+            margin-left: 2px;
+        }
+
+        #stepButton:hover, #back-button:hover {
+            background-color: #218838;
+        }
+
+        #stepButton:disabled, #repeatButton:disabled, #phraseButton:disabled, #answerButton:disabled {
+            background-color: #6c757d;
+        }
+
+        #phrase2Button:disabled, #answer2Button:disabled, #levelButton:disabled {
+            background-color: #6c757d;
+        }
+
+        #repeatButton {
+            background-color: #28a745;
+            color: white;
+        }
+
+        #phraseButton, #phrase2Button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #answerButton, #answer2Button {
+            background-color: #28a745;
+            color: white;
+        }
+
+        #nextButton, #next2Button {
+            background-color: #007bff;
+            margin-top: 60px; /* Увеличить отступ сверху для создания большего расстояния */
+            color: white;
+        }
+
+        #nextButton:hover, #next2Button:hover {
+            background-color: #0056b3;
+        }
+
+        #levelButton {
+            background-color: #808080;
+            color: white;
+        }
+
+        #levelButton:hover {
+            background-color: #DC143C;
+        }
+
+        /* медиа-запрос */
+        @media (max-width: 768px) {
+            .container {
+                align-items: flex-end;
+            }
+        }
+    </style>
+    <script src="common.js"></script>
+</head>
+<body>
+    <audio id="background-audio"></audio>
+    <div class="header">
+        <button id="stepButton" disabled>Schritt</button>
+
+        <!-- Добавленный раскрывающийся список -->
+        <select class="dropdown" id="dropdownMenu">
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+        </select>
+
+        <button id="back-button" onclick="window.close()">&lt;</button>
+    </div>
+        <div id="waitContainer" class="container">Programm wird ausgeführt</div>
+        <div id="questionContainer" class="container">
+            <!--<button class="button repeat" id="repeatButton" onclick="handleRepeatButton()">Wiederholung</button>  МОДЕЛЬ2 -->
+            <button class="button" id="repeatButton">Wiederholung</button>
+            <button class="button" id="phraseButton">Phrase</button>
+            <button class="button" id="answerButton">Antwort</button>
+            <button class="button" id="nextButton">Go</button>
+        </div>
+        <div id="listContainer" class="container">
+            <button class="button" id="phrase2Button">Phrase</button>
+            <button class="button" id="answer2Button">Answer</button>
+            <button class="button" id="levelButton">Level</button>
+            <button class="button" id="next2Button">Go</button>
+        </div>
+    <script>
+        let mode = 'dialog'; // Default mode is 'dialog'
+        let jsFileName = '';
+        let tasks = [];
+        let currentIndex = 0;
+
+        var Data = [];
+        var choicePhrase;
+        var previousPhraseB = null;
+
+//        // Обработчик нажатия кнопки Play   МОДЕЛЬ2
+//        function handleStepButton() {
+//            console.log('step');
+//        }
+
+        // Function to get query string parameters
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // событие - завершения загрузки всех элементов страницы
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // инициализация кнопок и получение ссылок на них
+            const waitContainer = document.getElementById('waitContainer');
+            const questionContainer = document.getElementById('questionContainer');
+            const listContainer = document.getElementById('listContainer');
+            const stepButton = document.getElementById('stepButton');
+
+            const nextButton = document.getElementById('nextButton');
+            const repeatButton = document.getElementById('repeatButton');
+            const phraseButton = document.getElementById('phraseButton');
+            const answerButton = document.getElementById('answerButton');
+
+            const next2Button = document.getElementById('next2Button');
+            const phrase2Button = document.getElementById('phrase2Button');
+            const answer2Button = document.getElementById('answer2Button');
+
+            ////////////////////////////////
+            // объявленные внутри функции //
+            ////////////////////////////////
+
+            function WaitShow() {
+                listContainer.style.display = 'none';
+                questionContainer.style.display = 'none';
+                waitContainer.style.display = 'flex';
+                stepButton.disabled = true;
+            }
+
+            function NextContainerShow(mode) {
+                // выбор контейнера для отображения
+                if (mode == 'dialog') {
+                    questionContainer.style.display = 'flex';
+                } else {
+                    listContainer.style.display = 'flex';
+                }
+                waitContainer.style.display = 'none';
+
+                // кнопку вызова функции - разблокировать
+                stepButton.disabled = false;
+            }
+
+            function step() {
+                // следующий шаг - переход к новому JS-файлу по списку
+                WaitShow();
+
+                // сброс и блокировка кнопок в контейнере
+                phraseButton.textContent = 'Phrase';
+                answerButton.textContent = 'Answer';
+                repeatButton.disabled = true;
+                phraseButton.disabled = true;
+                answerButton.disabled = true;
+                nextButton.textContent = 'Go';
+
+                phrase2Button.textContent = 'A';
+                answer2Button.textContent = 'B';
+                phrase2Button.disabled = true;
+                answer2Button.disabled = true;
+                next2Button.textContent = 'Go';
+
+                if (tasks.length == 0) {
+                    console.error('Tasks not loaded');
+                    return;
+                }
+
+                // переход на следующее Задание
+                currentIndex = (currentIndex + 1) % tasks.length;
+                const currentTask = tasks[currentIndex];
+                mode = currentTask.type;
+                jsFileName = currentTask.files[Math.floor(Math.random() * currentTask.files.length)];
+
+                console.log('1_mode:', mode);
+                console.log('1_jsFileName:', jsFileName);
+
+                // загрузка Данных
+                loadJS();
+
+                NextContainerShow(mode);
+            }
+
+            function next() {
+                // console.log('next');
+
+                // сброс кнопок в контейнере
+                phraseButton.textContent = 'Phrase';
+
+                // выбор случайной фразы и озвучка
+                randomPhrase();
+
+                // если озучки нет - показать Фразу
+                playAudio(choicePhrase.phraseB).then(result => {
+                    //console.log('play sound:', result);
+                    if (result == 0) {
+                        phraseButton.textContent = choicePhrase.phraseB;
+                    }
+                });
+                // настройка и разблокировка кнопок в контейнере
+                answerButton.textContent = choicePhrase.answerA;
+                answerButton.textContent = '?';
+                nextButton.textContent = 'Nächst';
+                repeatButton.disabled = false;
+                phraseButton.disabled = false;
+                answerButton.disabled = false;
+            }
+
+            function next2() {
+                // выбор случайной фразы
+                randomPhrase();
+
+                phrase2Button.textContent = choicePhrase.phraseB;
+                answer2Button.textContent = '?';
+                next2Button.textContent = 'Nächst';
+                phrase2Button.disabled = false;
+                answer2Button.disabled = false;
+
+                playAudio(choicePhrase.phraseB);
+            }
+
+            function phrase() {
+                //console.log('phrase');
+                phraseButton.textContent = choicePhrase.phraseB;
+            }
+
+            function phrase2() {
+                playAudio(choicePhrase.phraseB);
+            }
+
+            function answer() {
+                //console.log('answer');
+
+                // скрытие ответа - для концентрации на вопросе
+                if (answerButton.textContent == '?') {
+                    answerButton.textContent = choicePhrase.answerA;
+                    return;
+                } else if (answerButton.textContent == choicePhrase.answerA) {
+                    answerButton.textContent = choicePhrase.answerB;
+
+                    // Сохранение данных в IndexedDB
+                    let currentTimestamp = Date.now(); // Текущий штамп времени
+                    let textToSave = choicePhrase.phraseB + '>' + choicePhrase.answerB;
+                    if (choicePhrase.answerB.includes('{')) {
+                    // !!! макроподстановка textA уже зачищает !!!
+                        // если есть макроподстановка
+                        //console.log('choicePhrase.answerA.includes("{"):', choicePhrase.answerA);
+                        currentTimestamp = Date.now() - 365.25 * 24 * 60 * 60 * 1000; // Штамп времени один год назад
+                        textToSave = choicePhrase.phraseB + '>?'; // убираем конструкцию {..} из ключа-поиска
+                        // чтобы всегда был сверху при сортировке - самое меньшее число
+                    }
+                    addRecord(textToSave, currentTimestamp)
+                        .then(message => console.log(message))
+                        .catch(error => console.error(error));
+
+                } else if (answerButton.textContent == choicePhrase.answerB) {
+                    answerButton.textContent = choicePhrase.answerA;
+                    return;
+                }
+
+                /////////////////////////////////////////
+                // контрольный вывод пары вопрос-ответ //
+                /////////////////////////////////////////
+                //console.log('Record:', textToSave, currentTimestamp);
+
+                // выполняем последним - так как ошибка здесь вызывает прерывание
+                playAudio(choicePhrase.answerB);
+            }
+
+            function answer2() {
+                answer2Button.textContent = choicePhrase.answerB;
+
+                // Сохранение данных в IndexedDB
+                let currentTimestamp = Date.now(); // Текущий штамп времени
+                let textToSave = choicePhrase.phraseB + '>' + choicePhrase.answerB;
+                addRecord(textToSave, currentTimestamp)
+                    .then(message => console.log(message))
+                    .catch(error => console.error(error));
+
+                playAudio(choicePhrase.answerB);
+            }
+
+            function repeat() {
+                playAudio(choicePhrase.phraseB);
+            }
+
+            /////////////////////////////////////////////////////
+            // продолжение обработки - потока addEventListener //
+            /////////////////////////////////////////////////////
+
+            // привязка событий-нажатия к кнопкам
+            stepButton.addEventListener('click', step);
+
+            nextButton.addEventListener('click', next);
+            repeatButton.addEventListener('click', repeat);
+            phraseButton.addEventListener('click', phrase);
+            answerButton.addEventListener('click', answer);
+
+            next2Button.addEventListener('click', next2);
+            phrase2Button.addEventListener('click', phrase2);
+            answer2Button.addEventListener('click', answer2);
+
+            WaitShow();
+
+            // блокировка и сброс кнопок
+            repeatButton.disabled = true;
+            phraseButton.disabled = true;
+            answerButton.disabled = true;
+            nextButton.textContent = 'Go';
+
+            // Get the 'number' parameter from query string
+            const numberParam = getParameterByName('number');
+            
+            // получен ли параметр при открытии формы
+            if (numberParam) {
+                // запуск с указанным файлом данных
+                console.log('received data file name:', numberParam);
+                const segments = numberParam.split('/');
+                if (segments.length == 2) {
+                    mode = segments[0];
+                    jsFileName = segments[1];
+                    console.log('mode:', mode, 'jsFileName:', jsFileName);
+
+                    // загрузка Данных
+                    loadJS();
+                    //loadDB();
+
+                    // выбор контейнера для отображения
+                    NextContainerShow(mode);
+                }
+            } else {
+                // автономный запуск
+                const scriptElement = document.createElement('script');
+                scriptElement.src = 'main.js';
+
+                scriptElement.onload = function () {
+                    console.log('processing configuration file');
+                    if (tasks && tasks.length > 0) {
+                        const firstTask = tasks[0];
+                        mode = firstTask.type;
+                        jsFileName = firstTask.files[0];
+                        console.log('mode:', mode, 'jsFileName:', jsFileName);
+
+                        // загрузка Данных
+                        loadJS();
+                        //loadDB();
+
+                        // выбор контейнера для отображения
+                        NextContainerShow(mode);
+                    } else {
+                        console.error('variable Tasks not loaded');
+                    }
+                };
+
+                scriptElement.onerror = function () {
+                    console.error('error loading configuration file');
+                };
+
+                document.head.appendChild(scriptElement);
+            }
+        });
+
+/////////////////////////////////////////////////////////////////////////////
+//  Функция для загрузки JS файла                                          //
+/////////////////////////////////////////////////////////////////////////////
+        function loadJS() {
+            // сброс массива
+            Data = [];
+
+            // MODE1 start
+            if (mode == 'dialog') {
+            
+            // Класс для хранения группы фраз и ответов
+            class PhraseGroup {
+                constructor() {
+                    this.sPhrases = ''; // Многострочный текст фраз
+                    this.sAnswers = ''; // Многострочный текст ответов
+                }
+                addPhrase(phrase) {
+                    this.sPhrases += phrase + '\n';
+                }
+                addAnswer(answer) {
+                    this.sAnswers += answer + '\n';
+                }
+            }
+
+            if (!jsFileName) {
+                console.error('config file not defined');
+                return;
+            }
+
+            loadScript(jsFileName, function() {
+                if (typeof LanguagePairEntry !== 'undefined') {
+                    // Считывание строк из переменной LanguagePairEntry
+                    var phrasesArray = LanguagePairEntry.trim().split('\n')
+                        .filter(line => line.trim() !== '' && !line.startsWith('--')); // Отбрасываем строки, начинающиеся с --
+                    //console.log('Полученные фразы:', phrasesArray);
+
+                    // Список для хранения объектов PhraseGroup
+                    var phraseGroups = [];
+                    var currentGroup = null;
+                    var grp = 0;
+
+                    phrasesArray.forEach(function(line) {
+
+                        // макроподстановка
+                        if (line.includes('{')) {
+                            line = macroToText(line);
+                        }
+
+                        if (!line.startsWith('  ')) {
+                            // Это фраза
+                            if (grp == 0) {
+                                grp = 1
+                                // Создаем новый объект
+                                currentGroup = new PhraseGroup();
+                                currentGroup.addPhrase(line.trim());
+                                // добавляем новый-объект в набор
+                                phraseGroups.push(currentGroup);
+                            } else {
+                                currentGroup.addPhrase(line.trim());
+                            }
+                        } else {
+                            // Это ответ
+                            grp = 0
+                            if (currentGroup) {
+                                // Добавляем ответ к текущей группе
+                                currentGroup.addAnswer(line.trim());
+                            } else {
+                                console.error('data error - answer without question:', line);
+                            }
+                        }
+                    });
+
+                    // Обход всех экземпляров PhraseGroup
+                    phraseGroups.forEach(group => {
+                        // Разделение многострочного текста на отдельные строки
+                        let phrases = group.sPhrases.trim().split('\n');
+                        let answers = group.sAnswers.trim().split('\n');
+
+                        // Обход всех строк в sPhrases
+                        phrases.forEach(phrase => {
+                            // Обход всех строк в sAnswers
+                            answers.forEach(answer => {
+
+                                //Data.push({phrase: phrase, answer: answer});
+
+                                // Разделение строки на сегменты по TAB
+                                let phraseSegments = phrase.split('\t');
+                                let answerSegments = answer.split('\t');
+
+                                // Формирование объекта для добавления в Data
+                                let dataObject = {
+                                    phraseA: phraseSegments[0] || '',
+                                    phraseB: phraseSegments[1] || '',
+                                    answerA: answerSegments[0] || '',
+                                    answerB: answerSegments[1] || '',
+                                    last: '' || '',
+                                    macro: '' || ''
+                                };
+
+                                // Добавление объекта в Data
+                                Data.push(dataObject);
+
+                            });
+                        });
+                    })
+
+                    //randomPhrase() ///  убрать после проверки - последовательности исполнения
+
+                    // Вызов loadDB после завершения loadJS
+                    loadDB();
+
+                    //////////////////////////////////
+                    // Вывод массива Data в консоль //
+                    //////////////////////////////////
+                    //console.log(Data);
+
+                } else {
+                    console.log('variable Phrases is not defined');
+                }
+            });
+            }
+            // MODE1 end
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // MODE2 start
+            if (mode == 'list') {
+
+            if (!jsFileName) {
+                console.error('config file not defined');
+                return;
+            }
+
+            loadScript(jsFileName, function() {
+                if (typeof LanguagePairEntry !== 'undefined') {
+                    // Считывание строк из переменной LanguagePairEntry
+                    var phrasesArray = LanguagePairEntry.trim().split('\n')
+                        .filter(line => line.trim() !== '' && !line.startsWith('-')); // Отбрасываем строки, начинающиеся с -
+
+                    phrasesArray.forEach(function(line) {
+                        // Разделение строки на сегменты по TAB
+                        let segments = line.split('\t');
+
+                        // Решение о случайном перемещении сегментов
+                        if (Math.random() > 0.5) {
+                            [segments[0], segments[1]] = [segments[1], segments[0]]; // Меняем местами
+                        }
+
+                        // Формирование объекта для добавления в Data
+                        let dataObject = {
+                            phraseA: '' || '',
+                            phraseB: segments[0] || '',
+                            answerA: '' || '',
+                            answerB: segments[1] || '',
+                            last: '' || '',
+                            macro: '' || ''
+                        };
+
+                        // Добавление объекта в Data
+                        Data.push(dataObject);
+                    });
+
+                    // Вызов loadDB после завершения loadJS
+                    loadDB();
+
+                    //////////////////////////////////
+                    // Вывод массива Data в консоль //
+                    //////////////////////////////////
+                    console.log('MODE2', Data);
+                } else {
+                    console.log('variable LanguagePairEntry is not defined');
+                }
+            });
+        }
+        // MODE2 end
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        }
+
+        // Функция для загрузки скрипта
+        function loadScript(url, callback) {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = mode +'/' + url + '.js';
+            script.onload = callback;
+            script.onerror = function() {
+                console.error('Ошибка загрузки скрипта:', url);
+            };
+            document.head.appendChild(script);
+        }
+
+
+
+    </script>
+</body>
+</html>
