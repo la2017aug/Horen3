@@ -117,7 +117,8 @@ var LanguagePairEntry = `
 Вена	Wien
 
 Деревья становятся зелеными	Die Bäume werden grün.
-ты пахнешь дерьмом	Du stinkst nach Scheiße.
+ты пахнешь розами	Du riechst nach Rosen.
+ты воняешь дерьмом	Du stinkst nach scheiße.
 дерьмо воняет ужасно	Die Scheiße stinkt fürchterlich.
 мы в дерьме	Wir stecken in der Scheiße.
 `;
