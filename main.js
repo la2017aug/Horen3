@@ -226,6 +226,9 @@ nodesData = [
         ]},
         { type: 'node', children: [
             { type: 'button', class: 'sub-list', dataNumber: 'Familie', text: 'Familie' }
+        ]},
+        { type: 'node', children: [
+            { type: 'button', class: 'sub-text', dataNumber: 'Perfekt-Präteritum', text: 'Perfekt-Präteritum' }
         ]}
     ]},
     { type: 'node', children: [
@@ -324,9 +327,6 @@ nodesData = [
         ]},
         { type: 'node', children: [
             { type: 'button', class: 'sub-list', dataNumber: 'Akk-Dat-Gen2', text: 'Akk-Dat-Gen2' }
-        ]},
-        { type: 'node', children: [
-            { type: 'button', class: 'sub-text', dataNumber: 'Perfekt', text: 'Perfekt' }
         ]}
     ]},
     { type: 'node', children: [
@@ -349,4 +349,20 @@ tasks = [
     { type: 'dialog', files: ['12'] },
     { type: 'list', files: ['Entschuldigung', 'Ich'] },
     { type: 'list', files: ['*'] }
+/*
+    { type: 'list', files: ['Alltag', 'Farbe', 'Freue mich'] },
+    { type: 'list', files: ['Ja-Nein', 'Partikeln'] },
+    { type: 'list', files: ['Termin', 'Urlaub'] },
+    { type: 'list', files: ['Sache1', 'Sache2', 'Sache3', 'Sache4'] },
+    { type: 'list', files: ['schluss', 'schwierige Wörter', 'Telefongespräch'] },
+    { type: 'list', files: ['Verb1', 'Verb2', 'Verb3', 'Verb4'] },
+    { type: 'list', files: ['Verkehrsmittel', 'Route', 'Reisen'] },
+    { type: 'list', files: ['Kleidung', 'Wetter', 'Wohnung', 'Tiere'] },
+    { type: 'list', files: ['Lebensmittel', 'Korper', 'Konjunktion', 'Gesund'] },
+    { type: 'list', files: ['Einkaufen', 'Dokumente', 'Beruf', '3', 'Datum'] },
+    { type: 'list', files: ['Beim Arzt', 'Gesund', 'Fitness', 'Familie', 'In der Apotheke'] },
+    { type: 'list', files: ['Gegensatz1', 'Gegensatz2', 'Gegensatz3', 'Gegensatz4', 'Beschreibung'] }
+*/
 ];
+
+
