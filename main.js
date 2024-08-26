@@ -5,6 +5,10 @@ Permission is granted to use, copy, modify, and distribute this software under t
 See the LICENSE file for full terms.
 */
 
+/*
+ver 2024-08-26 gitHub
+*/
+
 document.addEventListener('DOMContentLoaded', function() {
     const treeContainer = document.querySelector('.tree');
 
@@ -86,9 +90,6 @@ nodesData = [
         ]},
         { type: 'node', children: [
             { type: 'button', class: 'sub-list', dataNumber: 'In der Apotheke', text: 'In der Apotheke' }
-        ]},
-        { type: 'node', children: [
-            { type: 'button', class: 'sub-list', dataNumber: 'Probleme', text: 'Probleme' }
         ]}
     ]},
     { type: 'node', children: [
@@ -336,9 +337,6 @@ nodesData = [
         { type: 'button', class: 'top-list', dataNumber: '_plus', text: 'plus' }
     ]},
     { type: 'node', children: [
-        { type: 'button', class: 'top-question', dataNumber: 'list/Beruf',  text: 'Frage-TEST-RUN' }
-    ]},
-    { type: 'node', children: [
         { type: 'button', class: 'top-question', text: 'Frage-maschine' }
     ]}
 ];
@@ -348,8 +346,6 @@ tasks = [
     { type: 'dialog', files: ['11'] },
     { type: 'dialog', files: ['12'] },
     { type: 'list', files: ['Entschuldigung', 'Ich'] },
-    { type: 'list', files: ['*'] }
-/*
     { type: 'list', files: ['Alltag', 'Farbe', 'Freue mich'] },
     { type: 'list', files: ['Ja-Nein', 'Partikeln'] },
     { type: 'list', files: ['Termin', 'Urlaub'] },
@@ -362,7 +358,6 @@ tasks = [
     { type: 'list', files: ['Einkaufen', 'Dokumente', 'Beruf', '3', 'Datum'] },
     { type: 'list', files: ['Beim Arzt', 'Gesund', 'Fitness', 'Familie', 'In der Apotheke'] },
     { type: 'list', files: ['Gegensatz1', 'Gegensatz2', 'Gegensatz3', 'Gegensatz4', 'Beschreibung'] }
-*/
 ];
 
 
