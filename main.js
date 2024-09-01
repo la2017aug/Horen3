@@ -1,4 +1,11 @@
-﻿const nodesData = `
+﻿/* 
+MIT License
+Copyright (c) 2024  Oleksandr Lavrynenko  la2017aug@gmail.com
+Permission is granted to use, copy, modify, and distribute this software under the MIT License.
+See the LICENSE file for full terms.
+*/
+
+const nodesData = `
 list	Entschuldigung
 list	Ja-Nein
 list	Freue mich
