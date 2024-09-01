@@ -15,32 +15,32 @@ See the LICENSE file for full terms.
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh; /* Высота тела страницы на весь экран */
+            height: 100vh; 
             display: flex;
             flex-direction: column;
         }
         .container {
             width: 99%;
-            margin: 5px auto; /* Уменьшенные отступы сверху и снизу */
-            flex: 1; /* Занимает оставшееся пространство между шапкой и нижним краем страницы */
+            margin: 5px auto; 
+            flex: 1; 
             display: flex;
             flex-direction: column;
         }
         .text-container {
-            margin: 5px 0; /* Уменьшенный отступ сверху и снизу */
-            font-size: 12px; /* Размер шрифта уменьшен */
-            padding: 5px; /* Уменьшенный отступ внутри контейнера */
+            margin: 5px 0; 
+            font-size: 12px; 
+            padding: 5px; 
             border: 1px solid #ccc;
             border-radius: 4px;
             background-color: #f9f9f9;
-            flex: 1; /* Занимает оставшееся пространство в контейнере */
+            flex: 1; 
             overflow-y: auto;
-            white-space: pre-wrap; /* Сохраняем пробелы и переносы строк */
-            font-family: 'Courier New', Courier, monospace; /* Моноширинный шрифт */
-            line-height: 1.5; /* Увеличенный межстрочный интервал */
-            color: #000000; /* Более яркий цвет текста */
-            width: 100%; /* Текстовый контейнер занимает всю ширину */
-            box-sizing: border-box; /* Учитываем padding и border в общей ширине */
+            white-space: pre-wrap; 
+            font-family: 'Courier New', Courier, monospace; 
+            line-height: 1.5; 
+            color: #000000; 
+            width: 100%; 
+            box-sizing: border-box; 
         }
         .header {
             display: flex;
@@ -62,14 +62,14 @@ See the LICENSE file for full terms.
             border-radius: 4px;
             transition: background-color 0.3s;
             text-align: center;
-            margin-left: 20px; /* Расстояние между аудиопроигрывателем и кнопкой */
+            margin-left: 20px; 
         }
         .back-button:hover {
             background-color: #218838;
         }
         .audio-player {
             width: 100%;
-            height: 34px; /* Уменьшенная высота аудиопроигрывателя */
+            height: 34px; 
         }
     </style>
 </head>
@@ -80,12 +80,9 @@ See the LICENSE file for full terms.
     </div>
     <div class="container" id="music-container">
         <div class="text-container" id="text-display">
-            <!-- Здесь будет отображаться текст -->
         </div>
     </div>
-
     <script>
-        // Функция для получения параметров из query string
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, '\\$&');
@@ -95,48 +92,32 @@ See the LICENSE file for full terms.
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
-
-        // Очистка старых данных в контейнере
         function clearContainer() {
             var container = document.getElementById('music-container');
             container.innerHTML = '';
         }
-
-        // Обработка данных после загрузки
         function processData(text, audioFile) {
             var textDisplay = document.getElementById('text-display');
             var audioPlayer = document.getElementById('audio-player');
-
-            // Удаление начальной и конечной пустых строк
             text = text.trim();
-
             textDisplay.textContent = text;
             audioPlayer.src = 'text/' + audioFile;
-            audioPlayer.load(); // Загружаем аудиофайл в плеер
+            audioPlayer.load(); 
         }
-
-        // Загрузка данных при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-            var number = getParameterByName('number'); // Получаем значение цифры из query string
+            var number = getParameterByName('number'); 
             if (!number) {
-                console.error('Не удалось получить цифру из query string');
                 return;
             }
-
-            // Формируем путь к файлу данных
             var dataFile = 'text/' + number + '.js';
             var scriptElement = document.createElement('script');
             scriptElement.src = dataFile;
-
             scriptElement.onload = function() {
-                console.log('Файл данных загружен успешно: ' + dataFile);
-                processData(text, audioFile); // Обрабатываем данные после загрузки
+                processData(text, audioFile); 
             };
             scriptElement.onerror = function() {
-                console.error('Ошибка загрузки файла данных: ' + dataFile);
             };
-
-            document.head.appendChild(scriptElement); // Добавляем скрипт на страницу
+            document.head.appendChild(scriptElement); 
         });
     </script>
 </body>

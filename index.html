@@ -13,31 +13,29 @@ See the LICENSE file for full terms.
     <title>Menu</title>
     <style>
         .node-container {
-            margin-left: 41px; /* отступ слева */
+            margin-left: 41px; 
         }
         .node-button {
-            margin-right: 10px; /* отступ справа */
-            min-width: 100px; /* Устанавливаем минимальную ширину */
+            margin-right: 10px; 
+            min-width: 100px; 
             border: none;
             border-radius: 5px;
-            margin-top: 10px; /* отступ сверху */
+            margin-top: 10px; 
             padding: 8px 20px;
         }
         .toggle-button {
             text-align: center;
-            width: 31px; /* ширина */
+            width: 31px; 
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 5px;
-            margin-right: 10px; /* отступ справа */
+            margin-right: 10px; 
             padding: 8px;
         }
-
         .toggle-button:hover, .node-button[n-type="list"]:hover {
             background-color: #0056b3;
         }
-
         .node-button[n-type="list"] {
             background-color: #007BFF;
             color: white;
@@ -58,17 +56,14 @@ See the LICENSE file for full terms.
             background-color: #FFA500;
             color: #FEF;
         }
-
         .selected-button {
             box-shadow: inset 0 0 0 3px red; 
         }
-
         .node-button[n-type="other"] {
-            background: linear-gradient(90deg, #ff6b6b, #f06595, #ff6b6b); /* Градиентный фон */
+            background: linear-gradient(90deg, #ff6b6b, #f06595, #ff6b6b); 
             background-size: 200% 200%;
             color: white;
             padding: 8px 20px;
-            /* font-size: 16px; */
             border: none;
             border-radius: 5px;
             position: relative;
@@ -79,19 +74,18 @@ See the LICENSE file for full terms.
             content: '';
             position: absolute;
             top: 0;
-            left: -150%; /* Начальное положение */
-            width: 200%; /* Увеличена ширина полосы */
+            left: -150%; 
+            width: 200%; 
             height: 100%;
-            background: rgba(255, 255, 255, 0.6); /* Более яркая полоса (увеличена прозрачность) */
-            transform: skewX(-20deg); /* Наклон полосы */
-            animation: shine 2.5s ease infinite; /* Уменьшена длительность анимации для ускорения движения */
+            background: rgba(255, 255, 255, 0.6); 
+            transform: skewX(-20deg); 
+            animation: shine 2.5s ease infinite; 
         }
         @keyframes shine {
             0% {left: -150%;}
             50% {left: 100%;}
             100% {left: 150%;}
         }
-
     </style>
 </head>
 <body>
@@ -104,40 +98,22 @@ See the LICENSE file for full terms.
         <p><a href="./about.html">About the program / Help</a></p>
     </footer>
     <script>
-        // Функция для получения параметра из URL
         function getURLParameter(name) {
             return new URLSearchParams(window.location.search).get(name);
         }
-        // Получаем параметр 'data' из URL
         const dataParam = getURLParameter('data');
-        // Логируем параметр для отладки
-        console.log('Data parameter:', dataParam);
-        // Устанавливаем путь к JS-файлу в зависимости от наличия параметра 'data'
         const scriptPath = dataParam ? `${dataParam}.js` : 'main.js';
-        // Логируем путь к скрипту для отладки
-        console.log('Script path:', scriptPath);
-        // Динамически загружаем соответствующий JS-файл
         const script = document.createElement('script');
         script.src = scriptPath;
-        // Обработчик успешной загрузки скрипта
         script.onload = function() {
-            //console.log(`Скрипт ${scriptPath} успешно загружен.`);
-            initPage();  // Вызываем initPage после загрузки скрипта
+            initPage();  
         };
-        // Обработчик ошибки загрузки скрипта
         script.onerror = function() {
-            //console.error(`Ошибка загрузки скрипта: ${scriptPath}`);
         };
-        // Добавляем скрипт на страницу
         document.body.appendChild(script);
-
-        // Функция, которая будет вызвана после загрузки JS-файла
         function initPage() {
             if (typeof nodesData !== 'undefined') {
-                //console.log('nodesData найден, инициализация страницы...');
                 const lines = nodesData.trim().split('\n');
-
-                // строим дерево
                 const Nodes = [];
                 let nodeTop = null;
                 lines.forEach(line => {
@@ -145,7 +121,6 @@ See the LICENSE file for full terms.
                     let type = (parts[0] || '').trim();
                     let data = (parts[1] || '').trim();
                     let text = (parts[2] || data).trim();
-
                     if (parts[0].startsWith('  ')) {
                         let nodeSub = new Node(type, data, text);
                         nodeTop.children.push(nodeSub);
@@ -154,29 +129,22 @@ See the LICENSE file for full terms.
                         Nodes.push(nodeTop);
                     }
                 });
-
-                // Функция для создания элементов узлов и их отображения на странице
                 function createNodeElement(node, isChild = false) {
                     const container = document.createElement('div');
                     container.className = isChild ? 'node-container' : '';
-
                     const button = document.createElement('button');
                     button.className = 'node-button';
                     button.textContent = node.text;
                     button.setAttribute('n-type', node.type);
                     button.setAttribute('n-data', node.data);
-
-                    // Обработчик нажатия кнопки
                     button.addEventListener('click', () => {
                         if (lastSelectedButton) {
                             lastSelectedButton.classList.remove('selected-button');
                         }
                         button.classList.add('selected-button');
                         lastSelectedButton = button;
-
                         const type = button.getAttribute('n-type');
                         const data = button.getAttribute('n-data');
-
                         if (type === 'list') {
                             window.open('list.html?number=' + data, '_blank');
                         } else if (type === 'text') {
@@ -193,13 +161,10 @@ See the LICENSE file for full terms.
                             window.open('about.html', '_self');
                         }
                     });
-
                     const label = document.createElement('span');
                     label.textContent = '   ';
-
                     container.appendChild(button);
                     container.appendChild(label);
-
                     if (node.children.length > 0) {
                         const toggleButton = document.createElement('button');
                         toggleButton.textContent = '+';
@@ -222,21 +187,16 @@ See the LICENSE file for full terms.
                         });
                         container.appendChild(childrenContainer);
                     }
-
                     return container;
                 }
-
                 const nodesContainer = document.getElementById('nodes-container');
                 Nodes.forEach(node => {
                     const nodeElement = createNodeElement(node);
                     nodesContainer.appendChild(nodeElement);
                 });
-
             } else {
-                console.error('nodesData не найден, проверьте данные в загружаемом скрипте.');
             }
         }
-
         class Node {
             constructor(type, data, text, children = []) {
                 this.type = type;
@@ -245,9 +205,7 @@ See the LICENSE file for full terms.
                 this.children = children;
             }
         }
-
         var lastSelectedButton = null;
-
     </script>
 </body>
 </html>

@@ -72,12 +72,10 @@ See the LICENSE file for full terms.
             <img id="main-image" src="" alt="Image">
         </div>
     </div>
-
     <script>
         var currentIndex = 0;
         var baseName = '';
         var maxNumber = 0;
-
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, '\\$&');
@@ -87,15 +85,12 @@ See the LICENSE file for full terms.
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
-
         function updateImage() {
             var image = document.getElementById('main-image');
             image.src = 'picture/' + baseName + currentIndex + '.jpg';
             var stepButton = document.querySelector('.step-button');
-            // stepButton.textContent = 'Bild ' + currentIndex;
             stepButton.textContent = 'Bild ' + currentIndex + ' / ' + maxNumber;
         }
-
         function step() {
             currentIndex++;
             if (currentIndex > maxNumber) {
@@ -103,31 +98,23 @@ See the LICENSE file for full terms.
             }
             updateImage();
         }
-
         document.addEventListener('DOMContentLoaded', function() {
             var number = getParameterByName('number');
             if (!number) {
-                console.error('Не удалось получить цифру из query string');
                 return;
             }
-
             var parts = number.split(/(\d+)/).filter(Boolean);
             if (parts.length < 2) {
-                console.error('Неправильный формат параметра number');
                 return;
             }
-
             baseName = parts[0];
             maxNumber = parseInt(parts[1], 10);
             currentIndex = 1;
-
             updateImage();
-
             var img = document.getElementById('main-image');
             var scale = 1;
             var panX = 0;
             var panY = 0;
-
             img.addEventListener('wheel', function(e) {
                 e.preventDefault();
                 if (e.deltaY > 0) {
@@ -137,25 +124,21 @@ See the LICENSE file for full terms.
                 }
                 img.style.transform = `scale(${scale}) translate(${panX}px, ${panY}px)`;
             });
-
             img.addEventListener('mousedown', function(e) {
                 e.preventDefault();
                 var startX = e.clientX;
                 var startY = e.clientY;
                 var origPanX = panX;
                 var origPanY = panY;
-
                 function onMouseMove(e) {
                     panX = origPanX + (e.clientX - startX) / scale;
                     panY = origPanY + (e.clientY - startY) / scale;
                     img.style.transform = `scale(${scale}) translate(${panX}px, ${panY}px)`;
                 }
-
                 function onMouseUp() {
                     document.removeEventListener('mousemove', onMouseMove);
                     document.removeEventListener('mouseup', onMouseUp);
                 }
-
                 document.addEventListener('mousemove', onMouseMove);
                 document.addEventListener('mouseup', onMouseUp);
             });

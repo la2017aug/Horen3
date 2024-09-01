@@ -15,39 +15,36 @@ See the LICENSE file for full terms.
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh; /* Высота тела страницы на весь экран */
+            height: 100vh; 
             display: flex;
             flex-direction: column;
         }
-
         .container {
             width: 99%;
-            margin: 5px auto; /* Уменьшенные отступы сверху и снизу */
-            flex: 1; /* Занимает оставшееся пространство между шапкой и нижним краем страницы */
+            margin: 5px auto; 
+            flex: 1; 
             display: flex;
             flex-direction: column;
-            padding-bottom: 20px; /* Увеличенный отступ снизу */
+            padding-bottom: 20px; 
         }
-
         .text-container {
-            margin: 5px 0; /* Уменьшенный отступ сверху и снизу */
-            font-size: 12px; /* Размер шрифта уменьшен */
+            margin: 5px 0; 
+            font-size: 12px; 
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             background-color: #f9f9f9;
-            height: 100px; /* Уменьшенная высота текстового контейнера */
+            height: 100px; 
             overflow-y: auto;
-            white-space: pre-wrap; /* Сохраняем пробелы и переносы строк */
-            font-family: 'Courier New', Courier, monospace; /* Моноширинный шрифт */
-            line-height: 1.5; /* Увеличенный межстрочный интервал */
-            color: #000000; /* Более яркий цвет текста */
-            text-align: left; /* Текст начинался от левого края */
+            white-space: pre-wrap; 
+            font-family: 'Courier New', Courier, monospace; 
+            line-height: 1.5; 
+            color: #000000; 
+            text-align: left; 
         }
-
         .header {
             display: flex;
-            justify-content: space-between; /* Выровняли элементы шапки по сторонам */
+            justify-content: space-between; 
             align-items: center;
             background-color: #f9f9f9;
             padding: 10px;
@@ -56,7 +53,6 @@ See the LICENSE file for full terms.
             top: 0;
             z-index: 1;
         }
-
         .back-button, .reset-button {
             cursor: pointer;
             background-color: #28a745;
@@ -66,20 +62,17 @@ See the LICENSE file for full terms.
             border-radius: 4px;
             transition: background-color 0.3s;
             text-align: center;
-            margin-left: 2px; /* Расстояние между кнопками */
+            margin-left: 2px; 
         }
-
         .back-button:hover, .reset-button:hover {
             background-color: #218838;
         }
-
         .button-container {
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Привязка кнопок к левой стороне */
+            align-items: flex-start; 
             margin-top: 10px;
         }
-
         .button {
             cursor: pointer;
             background-color: #007bff;
@@ -88,31 +81,28 @@ See the LICENSE file for full terms.
             padding: 8px 16px;
             border-radius: 4px;
             transition: background-color 0.3s;
-            text-align: left; /* Текст кнопки будет выровнен по левому краю */
-            margin: 5px 0; /* Отступы между кнопками */
-            width: 100%; /* Кнопки вопросов занимают всю ширину контейнера */
-            max-width: fit-content; /* Кнопки соответствуют размеру текста */
+            text-align: left; 
+            margin: 5px 0; 
+            width: 100%; 
+            max-width: fit-content; 
         }
-
         .button:hover {
             background-color: #0056b3;
         }
-
         .button-2 {
             cursor: pointer;
-            background-color: #28a745; /* Цвет кнопки ответа */
+            background-color: #28a745; 
             color: white;
             border: none;
             padding: 8px 16px;
             border-radius: 4px;
             transition: background-color 0.3s;
-            text-align: left; /* Текст кнопки будет выровнен по левому краю */
-            margin: 5px 0 5px 20px; /* Отступы между кнопками и сдвиг вправо на 20px */
-            max-width: fit-content; /* Кнопка соответствует размеру текста */
-            display: block; /* Кнопки располагаются вертикально */
-            white-space: nowrap; /* Запретить перенос текста */
+            text-align: left; 
+            margin: 5px 0 5px 20px; 
+            max-width: fit-content; 
+            display: block; 
+            white-space: nowrap; 
         }
-
         .button-2:hover {
             background-color: #218838;
         }
@@ -122,26 +112,16 @@ See the LICENSE file for full terms.
 <body>
     <audio id="background-audio"></audio>
     <div class="header">
-        <!-- Antworten zurücksetzen -->
         <button class="reset-button" onclick="resetAnswers()">Reset answers</button>
         <button class="back-button" onclick="window.close()">&lt;</button>
     </div>
     <div class="container">
         <div class="text-container" id="text-display">
-            <!-- Здесь будет отображаться описание задания -->
         </div>
         <div class="button-container" id="button-container">
-            <!-- Здесь будут динамически добавляться кнопки вопросов и ответов -->
         </div>
     </div>
-
     <script>
-        // Вызываем функцию при загрузке страницы
-        //window.onload = function() {
-        //    refreshPageOnce();
-        //};
-
-        // Функция для получения параметров из query string
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, '\\$&');
@@ -151,72 +131,47 @@ See the LICENSE file for full terms.
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
-        
-        // Очистка старых данных в контейнере
         function clearContainer() {
             var container = document.getElementById('button-container');
             container.innerHTML = '';
         }
-
         function playAudio(text) {
             var audio = document.getElementById('background-audio');
             var fileName = 'test/' + cleanseFileName(text);
-            //alert(fileName);
             audio.src = fileName + '.mp3';
             audio.play().catch(function(error) {
-                console.log('playAudio error: ', error);
             });
         }
-
-        // Загрузка данных при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
-            var fileName = getParameterByName('number'); // Получаем имя файла из query string параметра 'number'
+            var fileName = getParameterByName('number'); 
             if (!fileName) {
-                console.error('Не удалось получить имя файла из query string');
                 return;
             }
-
-            // Формируем путь к файлу данных
             var dataFile = 'test/' + fileName + '.js';
-            clearContainer(); // Очищаем старые данные
+            clearContainer(); 
             var scriptElement = document.createElement('script');
             scriptElement.src = dataFile;
-
             scriptElement.onload = function() {
-                console.log('Файл данных загружен успешно: ' + dataFile);
-                processData(data); // Обрабатываем данные после загрузки
+                processData(data); 
             };
             scriptElement.onerror = function() {
-                console.error('Ошибка загрузки файла данных: ' + dataFile);
             };
-            
-            document.head.appendChild(scriptElement); // Добавляем скрипт на страницу
+            document.head.appendChild(scriptElement); 
         });
-
-        // Функция для изменения текста кнопки и воспроизведения звука
         function changeTextAndPlay(button, text) {
-            button.textContent = text; // Установка нового текста на кнопке
-            playAudio(text); // Воспроизведение звука по тексту кнопки
+            button.textContent = text; 
+            playAudio(text); 
         }
-
-        // Функция для сброса ответов в первоначальное состояние
         function resetAnswers() {
             var answerButtons = document.querySelectorAll('.button-2');
-
             answerButtons.forEach(function(button) {
-                button.textContent = ''; // Очистка текста кнопки
+                button.textContent = ''; 
             });
         }
-
-        // Обработка данных и создание кнопок вопросов и ответов
         function processData(data) {
             var textDisplay = document.getElementById('text-display');
             var buttonContainer = document.getElementById('button-container');
-
-            // Загружаем содержимое текстового контейнера
             textDisplay.textContent = data.taskDescription.trim();
-
-            // Формируем кнопки вопросов
             var questionsArray = data.questions.trim().split('\n');
             questionsArray.forEach(function(questionText, index) {
                 var questionButton = document.createElement('button');
@@ -224,15 +179,12 @@ See the LICENSE file for full terms.
                 questionButton.textContent = questionText.trim();
                 questionButton.onclick = function() { playAudio(data.audioFiles.trim().split('\n')[index].trim()); };
                 buttonContainer.appendChild(questionButton);
-
-                // Формируем кнопки ответов для каждого вопроса
                 var answersArray = data.answers[index].trim().split('\n');
                 var answerContainer = document.createElement('div');
                 buttonContainer.appendChild(answerContainer);
                 answersArray.forEach(function(answerText) {
                     var answerButton = document.createElement('button');
                     answerButton.className = 'button button-2';
-                    //answerButton.textContent = answerText.trim();
                     answerButton.onclick = function() { changeTextAndPlay(this, answerText.trim()); };
                     answerContainer.appendChild(answerButton);
                 });

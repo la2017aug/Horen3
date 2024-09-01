@@ -15,7 +15,7 @@ See the LICENSE file for full terms.
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #2F4F4F; /* Темый цвет фона */
+            background-color: #2F4F4F; 
         }
         .container {
             width: 97%;
@@ -26,7 +26,7 @@ See the LICENSE file for full terms.
             margin-bottom: 10px;
             padding: 10px;
             border-radius: 4px;
-            background-color: #FFFFFF; /* Белый цвет фона */
+            background-color: #FFFFFF; 
         }
         .item {
             display: flex;
@@ -58,15 +58,12 @@ See the LICENSE file for full terms.
         button.audio-button:hover {
             background-color: #0056b3;
         }
-
         button.audio-button.green {
             background-color: #28a745;
         }
-
         button.audio-button.green:hover {
             background-color: #218838;
         }
-
         .hidden {
             display: none;
         }
@@ -127,13 +124,10 @@ See the LICENSE file for full terms.
         <button class="back-button" onclick="window.close()">&lt;</button>
     </div>
     <div class="container" id="music-container">
-        <!-- Данные будут динамически загружены сюда -->
     </div>
-
     <script>
         var currentIndex = 0;
         var shouldStop = 0;
-
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, '\\$&');
@@ -143,21 +137,18 @@ See the LICENSE file for full terms.
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
-
         function clearContainer() {
             var container = document.getElementById('music-container');
             container.innerHTML = '';
         }
-
         function processData(LanguagePairEntry) {
             var lines = LanguagePairEntry.split('\n');
             var container = document.getElementById('music-container');
             container.innerHTML = '';
             var groupContainer = document.createElement('div');
             groupContainer.className = 'group-container';
-
             lines.forEach((line, index) => {
-                var parts = line.split('\t'); // TAB
+                var parts = line.split('\t'); 
                 if (parts.length >= 2 && parts[0].trim() !== '-' && parts[0].trim() !== '') {
                     var item = document.createElement('div');
                     item.className = 'item';
@@ -171,11 +162,10 @@ See the LICENSE file for full terms.
                     button.className = 'audio-button';
                     button.textContent = parts[1];
                     button.onclick = function() {
-                        // сохраняем индекс нажатой кнопки - если кнопка Play All была нажата
                         if (shouldStop > 0) {
                             let buttons = document.querySelectorAll('.audio-button');
                             currentIndex = Array.from(buttons).indexOf(button);
-                            shouldStop = 2; // включаем флаг прерывания для PlayAll
+                            shouldStop = 2; 
                         }
                         playAudio(button);
                     };
@@ -188,9 +178,7 @@ See the LICENSE file for full terms.
                     groupContainer.className = 'group-container';
                 }
             });
-
             container.appendChild(groupContainer);
-
             var textElements = document.querySelectorAll('.text');
             var toggleTextCheckbox = document.getElementById('toggle-text');
             if (toggleTextCheckbox.checked) {
@@ -199,48 +187,35 @@ See the LICENSE file for full terms.
                 });
             }
         }
-
         document.addEventListener('DOMContentLoaded', function() {
             var number = getParameterByName('number');
             if (!number) {
-                console.error('Не удалось получить цифру из query string');
                 return;
             }
-
             var dataFile = 'list/' + number + '.js';
             clearContainer();
             var scriptElement = document.createElement('script');
             scriptElement.src = dataFile;
-
             scriptElement.onload = function() {
-                console.log('Файл данных загружен успешно: ' + dataFile);
                 processData(LanguagePairEntry);
             };
             scriptElement.onerror = function() {
-                console.error('Ошибка загрузки файла данных: ' + dataFile);
             };
-
             document.head.appendChild(scriptElement);
         });
-
         function playAudio(button) {
             var audio = document.getElementById('background-audio');
             var buttonText = button.textContent;
             var fileName = subdirectory + cleanseFileName(buttonText);
-            // визуальная отметка цветом - что строка обработана
-            // Проверяем текущий класс кнопки и меняем его
             if (button.classList.contains('green')) {
-                button.classList.remove('green'); // Возвращаем исходный цвет
+                button.classList.remove('green'); 
             } else {
-                button.classList.add('green'); // Меняем цвет
+                button.classList.add('green'); 
             }
-            //alert(fileName);
             audio.src = fileName + '.mp3';
             audio.play().catch(function(error) {
-                console.log('playAudio error: ', error);
             });
         }
-
         function toggleButtons() {
             var checkBox = document.getElementById('toggle-buttons');
             var buttons = document.querySelectorAll('.audio-button');
@@ -252,7 +227,6 @@ See the LICENSE file for full terms.
                 }
             });
         }
-
         function toggleText() {
             var checkBox = document.getElementById('toggle-text');
             var textElements = document.querySelectorAll('.text');
@@ -264,22 +238,15 @@ See the LICENSE file for full terms.
                 }
             });
         }
-
         async function playAll() {
-            shouldStop = 1; // сбрасываем флаг остановки
-
-            // цвет кнопки
+            shouldStop = 1; 
             var playButton = document.querySelector('.play-all-button');
             var originalColor = playButton.style.backgroundColor;
             playButton.style.backgroundColor = 'yellow';
-
             var buttons = document.querySelectorAll('.audio-button');
-            if (buttons.length === 0) return; // Если нет кнопок, ничего не делаем
-
+            if (buttons.length === 0) return; 
             for (let i = currentIndex; i < buttons.length; i++) {
-                // прерываем цикл при наличии флага остановки
                 if (shouldStop == 2) {
-                    // возврат цвета кнопки
                     playButton.style.backgroundColor = originalColor;
                     break;
                 }
@@ -288,14 +255,11 @@ See the LICENSE file for full terms.
                     try {
                         await playAudioAndWait(button, 2000);
                     } catch (error) {
-                        console.error('Ошибка воспроизведения: ', error);
                     }
                 }
             }
-            // возврат цвета кнопки
             playButton.style.backgroundColor = originalColor;
         }
-
         function playAudioAndWait(button, delayMs) {
             return new Promise((resolve, reject) => {
                 var audio = document.getElementById('background-audio');
