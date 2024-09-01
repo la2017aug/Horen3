@@ -18,32 +18,40 @@ See the LICENSE file for full terms.
             font-family: Arial, sans-serif;
             overflow: hidden;
         }
+
+        /* Фоновое изображение */
         body {
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            transition: background-image 1s ease-in-out;
+            transition: background-image 1s ease-in-out; /* Плавный переход между изображениями */
         }
+
+        /* Контейнер для текста */
         .scroll-container {
             position: relative;
             width: 60%;
             height: 50%;
             margin: 0 auto;
             top: 25%;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.8); /* Прозрачный белый фон */
             padding: 20px;
             border-radius: 10px;
-            overflow: hidden;
+            overflow: hidden; /* Предотвращает прокрутку контейнера */
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
             cursor: pointer;
         }
+
+        /* Текст для прокрутки */
         .scroll-text {
             position: absolute;
-            top: 100%;
+            top: 100%; /* Начальное положение текста ниже контейнера */
             width: 100%;
             text-align: left;
-            white-space: pre-wrap;
+            white-space: pre-wrap; /* Сохраняет переносы строк */
         }
+
+        /* Кнопка Back */
         .back-button {
             position: absolute;
             bottom: 20px;
@@ -57,92 +65,54 @@ See the LICENSE file for full terms.
             /* font-size: 16px; */
             /* cursor: pointer; */
         }
+
         .back-button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
+
     <div class="scroll-container">
-        <div class="scroll-text">
-Hello!
-
-The program is currently running on gitHub.com
-This is a world-famous site - 
-meets all modern security requirements.
-
-But gitHub has limitations -
-the time of the general(all outdoors) connection to the site.
-And you may well encounter a problem.
-
-In general, the program is designed to run locally -
-i.e. on the user's device.
-
-
-
-Here are instructions on how to run the program locally:
-
-Go to GitHub at
-https://github.com/la2017aug/Horen3.git
-
-Click the button - Code (it's Green)
-Select - Download ZIP
-
-Unzip the Zip file into a folder.
-In this folder, run the file - index.html
-
-
-
-You can change the base language to any other yourself.
-It is important to keep the file structure - 
-commas, quotes, etc.
-
-The program is provided AS IS and is open source.
-Errors in the program and data are quite possible.
-
-The author does not approve 
-of the use of this program for commercial purposes.
-
-The author does not bear ANY responsibility 
-for the consequences of CHANGING the program CODE, 
-whether done intentionally, accidentally 
-or without the user's knowledge.
-
-For questions, write to me. 
-My email is listed in the License.
-
-
-2024-09-01
-another gitHub limitation was discovered -
-the number of files in the audio directory is no more than 1000.
-Solution - audio.zip
-https://github.com/la2017aug/Horen3.git/audio.zip
-
-        </div>
+        <div class="scroll-text"></div>
     </div>
     <button class="back-button" onclick="window.open('index.html', '_self')">Back</button>
+    <script src="about.js"></script>
     <script>
         let scrollContainer = document.querySelector('.scroll-container');
         let scrollText = document.querySelector('.scroll-text');
-        let scrollSpeed = 1;
-        let scrolling = true;
+        let scrollSpeed = 1; // Скорость прокрутки
+        let scrolling = true; // Флаг для проверки, идет ли прокрутка
+
+        // Функция для автоматической прокрутки
         function autoScrollText() {
             if (scrolling) {
                 let containerHeight = scrollContainer.clientHeight;
                 let textHeight = scrollText.scrollHeight;
+                
+                // Прокручиваем текст
                 scrollText.style.top = (parseFloat(getComputedStyle(scrollText).top) - scrollSpeed) + 'px';
+
+                // Если текст полностью прокрутился, сбрасываем его в начало
                 if (parseFloat(getComputedStyle(scrollText).top) < -textHeight) {
                     scrollText.style.top = containerHeight + 'px';
                 }
+                
                 requestAnimationFrame(autoScrollText);
             }
         }
+
+        // Запуск автоматической прокрутки
         autoScrollText();
+
+        // Остановка прокрутки при щелчке на тексте
         scrollContainer.addEventListener('click', () => {
-            scrolling = false;
-            scrollContainer.style.overflow = 'auto';
-            scrollText.style.top = '0px';
+            scrolling = false; // Останавливаем прокрутку
+            scrollContainer.style.overflow = 'auto'; // Включаем ручную прокрутку
+            scrollText.style.top = '0px'; // Перемещаем текст в начало контейнера
         });
+
+        // Фоновые изображения
         const backgrounds = [
             'images/background1.jpg',
             'images/background2.jpg',
@@ -150,13 +120,19 @@ https://github.com/la2017aug/Horen3.git/audio.zip
             'images/background4.jpg'
         ];
         let currentIndex = 0;
-        const interval = 10000;
+        const interval = 10000; // Интервал смены изображений в миллисекундах
+
         function changeBackground() {
             currentIndex = (currentIndex + 1) % backgrounds.length;
             document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
         }
+
+        // Устанавливаем начальное фоновое изображение
         document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
+
+        // Меняем фоновое изображение через интервал
         setInterval(changeBackground, interval);
+
     </script>
 </body>
 </html>
