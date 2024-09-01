@@ -5,230 +5,249 @@ Copyright (c) 2024  Oleksandr Lavrynenko  la2017aug@gmail.com
 Permission is granted to use, copy, modify, and distribute this software under the MIT License.
 See the LICENSE file for full terms.
 -->
-<html lang="ru">
+<html lang="en" content="notranslate">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dict7.2024-0713_0812</title>
+    <meta name="google" content="notranslate">
+    <title>Menu</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
+        .node-container {
+            margin-left: 41px; /* отступ слева */
         }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Установите минимальную высоту равной высоте окна */
+        .node-button {
+            margin-right: 10px; /* отступ справа */
+            min-width: 100px; /* Устанавливаем минимальную ширину */
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px; /* отступ сверху */
+            padding: 8px 20px;
         }
-
-        .tree {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            flex: 1;
-        }
-
-        .node {
-            margin: 5px 0;
-            display: flex;
-            align-items: center;
-        }
-
         .toggle-button {
-            padding: 5px 10px;
+            text-align: center;
+            width: 31px; /* ширина */
             background-color: #007BFF;
-            color: #FFF;
+            color: white;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
+            margin-right: 10px; /* отступ справа */
+            padding: 8px;
         }
 
-        .top-list {
-            padding: 5px 10px;
+        .toggle-button:hover, .node-button[n-type="list"]:hover {
+            background-color: #0056b3;
+        }
+
+        .node-button[n-type="list"] {
             background-color: #007BFF;
-            color: #FFF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
+            color: white;
         }
-
-        .top-zero {
-            padding: 5px 10px;
-            background-color: lightblue;
-            color: #FEF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .top-question {
-            padding: 5px 10px;
-            background-color: #FFA500;
-            color: #FEF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .sub-list {
-            padding: 5px 10px;
-            background-color: #28a745;
-            color: #FEF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .sub-text {
-            padding: 5px 10px;
+        .node-button[n-type="text"] {
             background-color: #006400;
             color: #FEF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
         }
-
-        .sub-test {
-            padding: 5px 10px;
-            background-color: #DC143C;
-            color: #FEF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .sub-picture {
-            padding: 5px 10px;
+        .node-button[n-type="picture"] {
             background-color: #FFD700;
             color: #000;
+        }
+        .node-button[n-type="test"] {
+            background-color: #DC143C;
+            color: #FEF;
+        }
+        .node-button[n-type="question"] {
+            background-color: #FFA500;
+            color: #FEF;
+        }
+
+        .selected-button {
+            box-shadow: inset 0 0 0 3px red; 
+        }
+
+        .node-button[n-type="other"] {
+            background: linear-gradient(90deg, #ff6b6b, #f06595, #ff6b6b); /* Градиентный фон */
+            background-size: 200% 200%;
+            color: white;
+            padding: 8px 20px;
+            /* font-size: 16px; */
             border: none;
             border-radius: 5px;
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
-            margin-right: 10px;
+        }
+        .node-button[n-type="other"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%; /* Начальное положение */
+            width: 200%; /* Увеличена ширина полосы */
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6); /* Более яркая полоса (увеличена прозрачность) */
+            transform: skewX(-20deg); /* Наклон полосы */
+            animation: shine 2.5s ease infinite; /* Уменьшена длительность анимации для ускорения движения */
+        }
+        @keyframes shine {
+            0% {left: -150%;}
+            50% {left: 100%;}
+            100% {left: 150%;}
         }
 
-        .sub-node {
-            display: none;
-            flex-direction: column;
-            margin-left: 30px;
-        }
-
-        .sub-node.show {
-            display: flex;
-        }
-
-        .main-content {
-            flex: 1; /* Занимает все доступное пространство между шапкой и футером */
-            padding: 20px;
-            overflow: auto; /* Позволяет содержимому прокручиваться */
-        }
-
-        footer {
-            background-color: #333;
-            color: white;
-            /* padding: 0px 0; Уменьшенные внутренние отступы */
-            text-align: center;
-            font-size: 0.7em; /* Уменьшенный размер шрифта */
-        }
-
-        footer a {
-            color: #ddd; /* Цвет для обычных ссылок */
-            text-decoration: none; /* Убирает подчеркивание */
-        }
-
-        footer a:visited {
-            color: #b3b3b3; /* Светлый цвет для посещенных ссылок */
-        }
     </style>
 </head>
 <body>
-    <div class="main-content">
-        <div class="tree"></div>
-    </div>
+    <header>
+        <img src="images/logo1.png" class="logo" style="width: 100px; height: auto">
+    </header>
+    <div id="nodes-container"></div>
     <footer>
         <p>&copy; 2024 Oleksandr Lavrynenko. This project is licensed under the <a href="./LICENSE.md">MIT License</a>.</p>
+        <p><a href="./about.html">About the program / Help</a></p>
     </footer>
-
-    <script src="main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tree = document.querySelector('.tree');
+        // Функция для получения параметра из URL
+        function getURLParameter(name) {
+            return new URLSearchParams(window.location.search).get(name);
+        }
+        // Получаем параметр 'data' из URL
+        const dataParam = getURLParameter('data');
+        // Логируем параметр для отладки
+        console.log('Data parameter:', dataParam);
+        // Устанавливаем путь к JS-файлу в зависимости от наличия параметра 'data'
+        const scriptPath = dataParam ? `${dataParam}.js` : 'main.js';
+        // Логируем путь к скрипту для отладки
+        console.log('Script path:', scriptPath);
+        // Динамически загружаем соответствующий JS-файл
+        const script = document.createElement('script');
+        script.src = scriptPath;
+        // Обработчик успешной загрузки скрипта
+        script.onload = function() {
+            //console.log(`Скрипт ${scriptPath} успешно загружен.`);
+            initPage();  // Вызываем initPage после загрузки скрипта
+        };
+        // Обработчик ошибки загрузки скрипта
+        script.onerror = function() {
+            //console.error(`Ошибка загрузки скрипта: ${scriptPath}`);
+        };
+        // Добавляем скрипт на страницу
+        document.body.appendChild(script);
 
-            tree.addEventListener('click', function(event) {
-                const target = event.target;
-                
-                if (target.classList.contains('toggle-button')) {
-                    const node = target.closest('.node');
-                    const subNode = node.nextElementSibling;
+        // Функция, которая будет вызвана после загрузки JS-файла
+        function initPage() {
+            if (typeof nodesData !== 'undefined') {
+                //console.log('nodesData найден, инициализация страницы...');
+                const lines = nodesData.trim().split('\n');
 
-                    if (subNode && subNode.classList.contains('sub-node')) {
-                        if (target.textContent === '+') {
-                            target.textContent = '-';
-                            subNode.classList.add('show');
-                        } else {
-                            target.textContent = '+';
-                            subNode.classList.remove('show');
-                        }
+                // строим дерево
+                const Nodes = [];
+                let nodeTop = null;
+                lines.forEach(line => {
+                    let parts = line.split('\t');
+                    let type = (parts[0] || '').trim();
+                    let data = (parts[1] || '').trim();
+                    let text = (parts[2] || data).trim();
 
-                        let sibling = node.nextElementSibling;
-                        while (sibling && !sibling.classList.contains('node')) {
-                            sibling.style.display = target.textContent === '-' ? 'flex' : 'none';
-                            sibling = sibling.nextElementSibling;
-                        }
-                    }
-                }
-
-                if (target.classList.contains('top-list') || target.classList.contains('sub-list')) {
-                    var number = target.getAttribute('data-number');
-                    if (number) {
-                        //window.location.href = 'list.html?number=' + number; // переход
-                        window.open('list.html?number=' + number, '_blank'); // в новой вкладке
-                    }
-                }
-
-                if (target.classList.contains('top-question')) {
-                    var number = target.getAttribute('data-number');
-                    if (number) {
-                        window.open('question.html?number=' + number, '_blank');
+                    if (parts[0].startsWith('  ')) {
+                        let nodeSub = new Node(type, data, text);
+                        nodeTop.children.push(nodeSub);
                     } else {
-                        window.open('question.html', '_blank');
+                        nodeTop = new Node(type, data, text);
+                        Nodes.push(nodeTop);
                     }
+                });
+
+                // Функция для создания элементов узлов и их отображения на странице
+                function createNodeElement(node, isChild = false) {
+                    const container = document.createElement('div');
+                    container.className = isChild ? 'node-container' : '';
+
+                    const button = document.createElement('button');
+                    button.className = 'node-button';
+                    button.textContent = node.text;
+                    button.setAttribute('n-type', node.type);
+                    button.setAttribute('n-data', node.data);
+
+                    // Обработчик нажатия кнопки
+                    button.addEventListener('click', () => {
+                        if (lastSelectedButton) {
+                            lastSelectedButton.classList.remove('selected-button');
+                        }
+                        button.classList.add('selected-button');
+                        lastSelectedButton = button;
+
+                        const type = button.getAttribute('n-type');
+                        const data = button.getAttribute('n-data');
+
+                        if (type === 'list') {
+                            window.open('list.html?number=' + data, '_blank');
+                        } else if (type === 'text') {
+                            window.open('text.html?number=' + data, '_blank');
+                        } else if (type === 'picture') {
+                            window.open('picture.html?number=' + data, '_blank');
+                        } else if (type === 'test') {
+                            window.open('test.html?number=' + data, '_blank');
+                        } else if (type === 'question') {
+                            window.open('question.html', '_blank');
+                        } else if (type === 'index') {
+                            window.open('index.html?data=' + data, '_self');
+                        } else if (type === 'help') {
+                            window.open('about.html', '_self');
+                        }
+                    });
+
+                    const label = document.createElement('span');
+                    label.textContent = '   ';
+
+                    container.appendChild(button);
+                    container.appendChild(label);
+
+                    if (node.children.length > 0) {
+                        const toggleButton = document.createElement('button');
+                        toggleButton.textContent = '+';
+                        toggleButton.className = 'toggle-button';
+                        container.insertBefore(toggleButton, button);
+                        const childrenContainer = document.createElement('div');
+                        childrenContainer.style.display = 'none';
+                        node.children.forEach(child => {
+                            const childElement = createNodeElement(child, true);
+                            childrenContainer.appendChild(childElement);
+                        });
+                        toggleButton.addEventListener('click', () => {
+                            if (childrenContainer.style.display === 'none') {
+                                childrenContainer.style.display = 'block';
+                                toggleButton.textContent = '-';
+                            } else {
+                                childrenContainer.style.display = 'none';
+                                toggleButton.textContent = '+';
+                            }
+                        });
+                        container.appendChild(childrenContainer);
+                    }
+
+                    return container;
                 }
 
-                if (target.classList.contains('sub-text')) {
-                    var number = target.getAttribute('data-number');
-                    if (number) {
-                        window.open('text.html?number=' + number, '_blank');
-                    }
-                }
+                const nodesContainer = document.getElementById('nodes-container');
+                Nodes.forEach(node => {
+                    const nodeElement = createNodeElement(node);
+                    nodesContainer.appendChild(nodeElement);
+                });
 
-                if (target.classList.contains('sub-test')) {
-                    var number = target.getAttribute('data-number');
-                    if (number) {
-                        window.open('test.html?number=' + number, '_blank');
-                    }
-                }
+            } else {
+                console.error('nodesData не найден, проверьте данные в загружаемом скрипте.');
+            }
+        }
 
-                if (target.classList.contains('sub-picture')) {
-                    var number = target.getAttribute('data-number');
-                    if (number) {
-                        window.open('picture.html?number=' + number, '_blank');
-                    }
-                }
+        class Node {
+            constructor(type, data, text, children = []) {
+                this.type = type;
+                this.data = data;
+                this.text = text;
+                this.children = children;
+            }
+        }
 
-            });
-        });
+        var lastSelectedButton = null;
+
     </script>
 </body>
 </html>
