@@ -16,4 +16,4 @@ Pontos fortes e fracos	Stärken und Schwächen
 `;
 
 // Подкаталог для MP3 файлов
-var subdirectory = 'audio/';
+var subdirectory = 'audio/Gegensatz/';
