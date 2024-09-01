@@ -51,7 +51,7 @@ another gitHub limitation was discovered -
 the number of files in the audio directory is no more than 1000.
 Unfortunately, GitHub only allows you to make a demonstration of the program, 
 without all the audio files.
-Solution - audio.zip
+Solution - audio*.zip
 
 
 
