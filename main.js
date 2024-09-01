@@ -19,7 +19,6 @@ list	Gesund
   picture	Korper2	Gesicht, Körper
   list	Beim Arzt
   list	In der Apotheke
-  list	Probleme
 list	Verkehrsmittel
   list	Route
   list	Reisen
@@ -107,8 +106,6 @@ zero	Test
   test	Akk-Dat-Gen1
   list	Akk-Dat-Gen2
 list	Brief
-list	_plus
-question	list/Beruf	Frage-TEST-RUN
 question	Frage-maschine
 other	Language
   index	main.Portuguese	Portuguese
