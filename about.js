@@ -15,6 +15,9 @@ Select - Download ZIP
 Unzip the Zip-file into a folder.
 In this folder, run the file - index.html
 
+Full audio catalog - archived in files audio*.zip
+They need to be unpacked into the program folder.
+
 You can change the base language to any other yourself.
 It is important to keep the file structure - 
 commas, quotes, etc.
