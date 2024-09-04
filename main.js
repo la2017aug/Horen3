@@ -83,6 +83,7 @@ list	Verb1	Verben
   list	Verb5_modal	Modalverben
   list	deklinieren
   list	verb6_IPPz	Infinitiv, Präsens, Präteritum, Partizip II
+  list	Verb8_mit_Dativ	Verb mit Dativ
 list	Beschreibung
 list	3	Kann helfen?
 list	Ich
