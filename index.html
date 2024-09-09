@@ -13,29 +13,31 @@ See the LICENSE file for full terms.
     <title>Menu</title>
     <style>
         .node-container {
-            margin-left: 41px; 
+            margin-left: 41px; /* отступ слева */
         }
         .node-button {
-            margin-right: 10px; 
-            min-width: 100px; 
+            margin-right: 10px; /* отступ справа */
+            min-width: 100px; /* Устанавливаем минимальную ширину */
             border: none;
             border-radius: 5px;
-            margin-top: 10px; 
+            margin-top: 10px; /* отступ сверху */
             padding: 8px 20px;
         }
         .toggle-button {
             text-align: center;
-            width: 31px; 
+            width: 31px; /* ширина */
             background-color: #007BFF;
             color: white;
             border: none;
             border-radius: 5px;
-            margin-right: 10px; 
+            margin-right: 10px; /* отступ справа */
             padding: 8px;
         }
+
         .toggle-button:hover, .node-button[n-type="list"]:hover {
             background-color: #0056b3;
         }
+
         .node-button[n-type="list"] {
             background-color: #007BFF;
             color: white;
@@ -56,14 +58,17 @@ See the LICENSE file for full terms.
             background-color: #FFA500;
             color: #FEF;
         }
+
         .selected-button {
             box-shadow: inset 0 0 0 3px red; 
         }
+
         .node-button[n-type="other"] {
-            background: linear-gradient(90deg, #ff6b6b, #f06595, #ff6b6b); 
+            background: linear-gradient(90deg, #ff6b6b, #f06595, #ff6b6b); /* Градиентный фон */
             background-size: 200% 200%;
             color: white;
             padding: 8px 20px;
+            /* font-size: 16px; */
             border: none;
             border-radius: 5px;
             position: relative;
@@ -74,53 +79,74 @@ See the LICENSE file for full terms.
             content: '';
             position: absolute;
             top: 0;
-            left: -150%; 
-            width: 200%; 
+            left: -150%; /* Начальное положение */
+            width: 200%; /* Увеличена ширина полосы */
             height: 100%;
-            background: rgba(255, 255, 255, 0.6); 
-            transform: skewX(-20deg); 
-            animation: shine 2.5s ease infinite; 
+            background: rgba(255, 255, 255, 0.6); /* Более яркая полоса (увеличена прозрачность) */
+            transform: skewX(-20deg); /* Наклон полосы */
+            animation: shine 2.5s ease infinite; /* Уменьшена длительность анимации для ускорения движения */
         }
         @keyframes shine {
             0% {left: -150%;}
             50% {left: 100%;}
             100% {left: 150%;}
         }
+
     </style>
+    <script src="common.js"></script>
 </head>
 <body>
     <header>
         <img src="./logo.png" class="logo" style="width: 100px; height: auto">
     </header>
-    <div id="nodes-container"></div>
-    <footer>
+    <div id="nodes-container" style="display:none;"></div>
+    <footer style="display:none;">
         <p>&copy; 2024 Oleksandr Lavrynenko. This project is licensed under the <a href="./LICENSE.md">MIT License</a>.</p>
         <p><a href="./about.txt">About the program / Help</a></p>
     </footer>
     <script>
+        // Функция для получения параметра из URL
         function getURLParameter(name) {
             return new URLSearchParams(window.location.search).get(name);
         }
-        const dataParam = getURLParameter('data');
+
+        // Получаем параметр 'f' из URL
+        const dataParam = getURLParameter('f');
+
+        // Определяем путь к загружаемому скрипту в зависимости от наличия параметра
         const scriptPath = dataParam ? `${dataParam}.js` : 'main.js';
+
+        // Динамически создаем элемент <script> для загрузки нужного JS-файла
         const script = document.createElement('script');
         script.src = scriptPath;
+
+        // После успешной загрузки скрипта вызываем функцию инициализации страницы
         script.onload = function() {
-            initPage();  
+            initPage();
         };
-        script.onerror = function() {
-        };
+
+        // Добавляем элемент <script> на страницу для загрузки JS-файла
         document.body.appendChild(script);
-        function initPage() {
+
+        // Функция инициализации страницы
+        async function initPage() {
+            // Проверяем, определены ли данные узлов (nodesData)
             if (typeof nodesData !== 'undefined') {
+                // Разделяем данные на строки
                 const lines = nodesData.trim().split('\n');
+
+                // Массив для хранения всех узлов
                 const Nodes = [];
                 let nodeTop = null;
-                lines.forEach(line => {
+
+                // Перебираем строки и создаем объекты узлов
+                for (let line of lines) {
                     let parts = line.split('\t');
                     let type = (parts[0] || '').trim();
                     let data = (parts[1] || '').trim();
                     let text = (parts[2] || data).trim();
+
+                    // Проверяем, является ли текущий узел дочерним
                     if (parts[0].startsWith('  ')) {
                         let nodeSub = new Node(type, data, text);
                         nodeTop.children.push(nodeSub);
@@ -128,75 +154,143 @@ See the LICENSE file for full terms.
                         nodeTop = new Node(type, data, text);
                         Nodes.push(nodeTop);
                     }
-                });
-                function createNodeElement(node, isChild = false) {
-                    const container = document.createElement('div');
-                    container.className = isChild ? 'node-container' : '';
-                    const button = document.createElement('button');
-                    button.className = 'node-button';
-                    button.textContent = node.text;
-                    button.setAttribute('n-type', node.type);
-                    button.setAttribute('n-data', node.data);
-                    button.addEventListener('click', () => {
-                        if (lastSelectedButton) {
-                            lastSelectedButton.classList.remove('selected-button');
-                        }
-                        button.classList.add('selected-button');
-                        lastSelectedButton = button;
-                        const type = button.getAttribute('n-type');
-                        const data = button.getAttribute('n-data');
-                        if (type === 'list') {
-                            window.open('list.html?number=' + data, '_blank');
-                        } else if (type === 'text') {
-                            window.open('text.html?number=' + data, '_blank');
-                        } else if (type === 'picture') {
-                            window.open('picture.html?number=' + data, '_blank');
-                        } else if (type === 'test') {
-                            window.open('test.html?number=' + data, '_blank');
-                        } else if (type === 'question') {
-                            window.open('question.html', '_blank');
-                        } else if (type === 'index') {
-                            window.open('index.html?data=' + data, '_self');
-                        } else if (type === 'help') {
-                            window.open('about.html', '_self');
-                        }
-                    });
-                    const label = document.createElement('span');
-                    label.textContent = '   ';
-                    container.appendChild(button);
-                    container.appendChild(label);
-                    if (node.children.length > 0) {
-                        const toggleButton = document.createElement('button');
-                        toggleButton.textContent = '+';
-                        toggleButton.className = 'toggle-button';
-                        container.insertBefore(toggleButton, button);
-                        const childrenContainer = document.createElement('div');
-                        childrenContainer.style.display = 'none';
-                        node.children.forEach(child => {
-                            const childElement = createNodeElement(child, true);
-                            childrenContainer.appendChild(childElement);
-                        });
-                        toggleButton.addEventListener('click', () => {
-                            if (childrenContainer.style.display === 'none') {
-                                childrenContainer.style.display = 'block';
-                                toggleButton.textContent = '-';
-                            } else {
-                                childrenContainer.style.display = 'none';
-                                toggleButton.textContent = '+';
-                            }
-                        });
-                        container.appendChild(childrenContainer);
-                    }
-                    return container;
                 }
+
+                // Создаем фрагмент документа для накопления всех элементов узлов
+                const fragment = document.createDocumentFragment();
+
+                // Создаем элементы узлов и добавляем их во фрагмент
+                for (let node of Nodes) {
+                    const nodeElement = await createNodeElement(node);
+                    fragment.appendChild(nodeElement);
+                }
+
+                // Вставляем все узлы на страницу за один раз, чтобы избежать мелькания
                 const nodesContainer = document.getElementById('nodes-container');
-                Nodes.forEach(node => {
-                    const nodeElement = createNodeElement(node);
-                    nodesContainer.appendChild(nodeElement);
-                });
+                nodesContainer.appendChild(fragment);
+
+                // Показываем контейнер после завершения отрисовки
+                nodesContainer.style.display = 'block';
+
+                // Показываем футер после завершения всей работы с DOM
+                document.querySelector('footer').style.display = 'block';
             } else {
+                console.error('nodesData не найден, проверьте данные в загружаемом скрипте.');
             }
         }
+
+        // Функция для создания элемента узла
+        async function createNodeElement(node, isChild = false) {
+            // Создаем контейнер для узла
+            const container = document.createElement('div');
+            container.className = isChild ? 'node-container' : '';
+
+            // Создаем кнопку для узла
+            const button = document.createElement('button');
+            button.className = 'node-button';
+            button.textContent = node.text;
+            button.setAttribute('n-type', node.type);
+            button.setAttribute('n-data', node.data);
+
+            // Обработчик клика на кнопке узла
+            button.addEventListener('click', () => {
+                // Снимаем выделение с предыдущей кнопки
+                if (lastSelectedButton) {
+                    lastSelectedButton.classList.remove('selected-button');
+                }
+                // Добавляем выделение на текущую кнопку
+                button.classList.add('selected-button');
+                lastSelectedButton = button;
+
+                // В зависимости от типа узла открываем соответствующую страницу
+                const type = button.getAttribute('n-type');
+                const data = button.getAttribute('n-data');
+
+                if (type === 'list') {
+                    window.open('list.html?f=' + data, '_blank');
+                } else if (type === 'text') {
+                    window.open('text.html?f=' + data, '_blank');
+                } else if (type === 'picture') {
+                    window.open('picture.html?f=' + data, '_blank');
+                } else if (type === 'test') {
+                    window.open('test.html?f=' + data, '_blank');
+                } else if (type === 'question') {
+                    window.open('question.html', '_blank');
+                } else if (type === 'index') {
+                    window.open('index.html?f=' + data, '_self');
+                } else if (type === 'help') {
+                    window.open('about.html', '_self');
+                }
+            });
+
+            // Создаем элемент для отображения данных last
+            const label = document.createElement('span');
+            label.textContent = '   ';
+            container.appendChild(button);
+            container.appendChild(label);
+
+            // Формируем ключ для поиска в базе данных
+            const key = node.type + '/' + node.data;
+            console.log('Search Key:', key); // Выводим ключ в консоль
+
+            // Получаем значение last из базы данных
+            const lastValue = await getLastFromDB(key);
+
+            // Если значение last найдено, выводим его в label
+            //if (lastValue) {
+            //    label.textContent = 'Last: ' + lastValue;
+            //}
+
+            // Если значение last найдено
+            if (lastValue) {
+                // Вычисляем разницу в миллисекундах между текущим временем и lastValue
+                const timeDifference = currentTime - lastValue;
+                // Переводим разницу из миллисекунд в дни
+                const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                // Если разница меньше или равна 360 дням, выводим её
+                if (daysDifference <= 360) {
+                    label.textContent = daysDifference + 'd';
+                } else {
+                    label.textContent = '';  // Если разница больше 360 дней, не выводим ничего
+                }
+            }
+
+            // Если у узла есть дочерние элементы, создаем для них контейнер
+            if (node.children.length > 0) {
+                // Создаем кнопку для скрытия/показа дочерних элементов
+                const toggleButton = document.createElement('button');
+                toggleButton.textContent = '+';
+                toggleButton.className = 'toggle-button';
+                container.insertBefore(toggleButton, button);
+
+                // Контейнер для дочерних узлов, по умолчанию скрыт
+                const childrenContainer = document.createElement('div');
+                childrenContainer.style.display = 'none';
+
+                // Создаем элементы для дочерних узлов и добавляем их в контейнер
+                for (let child of node.children) {
+                    const childElement = await createNodeElement(child, true);
+                    childrenContainer.appendChild(childElement);
+                }
+
+                // Обработчик клика по кнопке скрытия/показа дочерних узлов
+                toggleButton.addEventListener('click', () => {
+                    if (childrenContainer.style.display === 'none') {
+                        childrenContainer.style.display = 'block';
+                        toggleButton.textContent = '-';
+                    } else {
+                        childrenContainer.style.display = 'none';
+                        toggleButton.textContent = '+';
+                    }
+                });
+
+                container.appendChild(childrenContainer);
+            }
+
+            return container;
+        }
+
+        // Класс для создания узлов
         class Node {
             constructor(type, data, text, children = []) {
                 this.type = type;
@@ -205,7 +299,33 @@ See the LICENSE file for full terms.
                 this.children = children;
             }
         }
+
+        // Переменная для хранения последней выбранной кнопки
         var lastSelectedButton = null;
+
+        // Получаем текущее время в формате timestamp
+        const currentTime = Date.now();
+
+        // Функция для получения значения last из базы данных
+        async function getLastFromDB(text) {
+            let db = await openDatabase(); // Открываем базу данных
+            return new Promise((resolve, reject) => {
+                let transaction = db.transaction(['phrasesLog'], 'readonly');
+                let objectStore = transaction.objectStore('phrasesLog');
+                let request = objectStore.get(text);
+                request.onsuccess = function(event) {
+                    let result = event.target.result;
+                    if (result) {
+                        resolve(result.last); // Возвращаем найденное значение last
+                    } else {
+                        resolve(''); // Если значение не найдено, возвращаем пустую строку
+                    }
+                };
+                request.onerror = function(event) {
+                    reject('Error getting record from DB: ' + event.target.errorCode);
+                };
+            });
+        }
     </script>
 </body>
 </html>
